@@ -76,11 +76,6 @@ axiosInstance.interceptors.request.use(async (config) => {
 // Response interceptor
 axiosInstance.interceptors.response.use(
     (response) => {
-    //   if (isEncryptDecrypt && response.config.url === `core/secure_api`) {
-    //     response.data = response?.data
-    //       ? JSON.parse(decryptData(response?.data))
-    //       : {};
-    //   }
       return response;
     },
     (errorIntercept) => {

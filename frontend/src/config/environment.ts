@@ -9,7 +9,6 @@ export interface Environment {
     basename: string;
     timeout: number;
 
-    command_menu_disable: boolean;
   }
 
   // interface DecodedToken {
@@ -42,6 +41,4 @@ export const environment: Environment = {
     timeout: 0,
 
     token: "Bearer " + localStorage.getItem("token"),
-
-    command_menu_disable: import.meta.env.VITE_COMMAND_MENU_DISABLE
 }; 
