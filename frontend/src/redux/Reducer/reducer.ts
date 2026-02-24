@@ -25,6 +25,12 @@ export const initialState: any = {
   isAuthenticated: !!localStorage.getItem('token'),
   userId: null,
 
+
+  // shopsActions
+  shops_list: [],
+  shops_list_meta: {},
+  shop_data: {},
+
 };
 
 const DataReducers = (state: any = initialState, action: types.Action) => {
@@ -61,6 +67,17 @@ const DataReducers = (state: any = initialState, action: types.Action) => {
         loggedIn: false,
         token: null,
         userId: null,
+      };
+    case types.SHOPS_LIST:
+      return {
+        ...state,
+        shops_list: action.payload.data,
+        shops_list_meta: action.payload.meta,
+      };
+    case types.SHOP_DATA:
+      return {
+        ...state,
+        shop_data: action.payload.data,
       };
     default:
       return state;

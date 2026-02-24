@@ -13,3 +13,7 @@ export type Action = {
   
   export const LOGIN_USER_SUCCESS = 'LOGIN_USER_SUCCESS';
   export const LOGIN_USER_FAILURE = 'LOGIN_USER_FAILURE';
+
+
+  export const SHOPS_LIST = 'SHOPS_LIST';
+  export const SHOP_DATA = 'SHOP_DATA';

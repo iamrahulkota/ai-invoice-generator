@@ -4,6 +4,8 @@ import { ErrorBoundary } from "react-error-boundary";
 import ErrorFallback from "../components/ErrorFallback";
 import AxiosConfig from "@/config/axiosConfig";
 import ScrollToTop from "@/lib/ScrollToTop";
+import { Provider } from "react-redux";
+import store from "@/redux/store";
 
 export default function ContextWrapper({
   children,
@@ -12,17 +14,19 @@ export default function ContextWrapper({
 }) {
   return (
     <ErrorBoundary FallbackComponent={ErrorFallback}>
-      <AxiosConfig>
-          <Toaster
-            richColors
-            position="top-right"
-            visibleToasts={3}
-            closeButton={true}
-          />
-          <PathTracker />
-          <ScrollToTop />
-          {children}
-      </AxiosConfig>
+      <Provider store={store}>
+        <AxiosConfig>
+            <Toaster
+              richColors
+              position="top-right"
+              visibleToasts={3}
+              closeButton={true}
+            />
+            <PathTracker />
+            <ScrollToTop />
+            {children}
+        </AxiosConfig>
+      </Provider>
     </ErrorBoundary>
   );
 }

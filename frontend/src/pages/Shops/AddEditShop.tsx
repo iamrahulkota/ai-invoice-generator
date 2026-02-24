@@ -16,13 +16,15 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { axiosInstance } from '@/config/axiosConfig';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm } from "react-hook-form";
+import { useDispatch } from 'react-redux';
 import { useNavigate, useParams } from 'react-router';
 import { z } from 'zod';
+import { create_shop } from '@/redux/Action/actions';
+import { toast } from 'sonner';
 
 const addEditShopSchema = z.object({
   shop_name: z
@@ -94,6 +96,7 @@ const addEditShopSchema = z.object({
 type AddEditShopValues = z.infer<typeof addEditShopSchema>
 
 export default function AddEditShop() {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const { shopId } = useParams<{ shopId: string | undefined }>();
 
@@ -120,22 +123,22 @@ export default function AddEditShop() {
     },
   });
 
-  useEffect(() => {
-    if (!shopId) return;
-    const fetchShopData = async () => {
-      try {
-        setIsLoading(true);
-        const response = await axiosInstance.get(`/shops/${shopId}`);
-        const data = response?.data;
-        if (data) form.reset(data);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchShopData();
-  }, [shopId, form]);
+  // useEffect(() => {
+  //   if (!shopId) return;
+  //   const fetchShopData = async () => {
+  //     try {
+  //       setIsLoading(true);
+  //       const response = await create_shop(`/shops/${shopId}`);
+  //       const data = response?.data;
+  //       if (data) form.reset(data);
+  //     } catch (error) {
+  //       console.error(error);
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   };
+  //   fetchShopData();
+  // }, [shopId, form]);
 
   const handleReset = () => {
     form.reset();
@@ -150,9 +153,14 @@ export default function AddEditShop() {
       console.log("payload -->", payload);
       // if (shopId) {
       //   await axiosInstance.patch(`/shops/${shopId}`, payload);
+      //   console.log("SHOP_ID", shopId);
       // } else {
-      //   await axiosInstance.post('/shops', payload);
+      //   await create_shop(payload);
       // }
+      const response = await create_shop(dispatch, payload);
+      if (response.meta.status) {
+        toast.success(response.meta.message);
+      }
       handleReset();
     } catch (error) {
       console.error(error);
