@@ -22,7 +22,6 @@
 import axios from 'axios';
 import type { AxiosInstance } from 'axios';
 import { environment } from './environment';
-import { getClientInfoFromCookie } from '@/hooks/useGetClientInfo';
 
 
 // Types
@@ -30,12 +29,10 @@ interface AxiosConfigProps {
     children: React.ReactNode;
   }
 
-
 // Constants for API configuration
 const baseUrl = environment.apiUrl;
 const timeout = environment.timeout;
 const token = environment.token;
-
 
 
 export const axiosInstance: AxiosInstance = axios.create({
@@ -49,25 +46,19 @@ export const axiosInstance: AxiosInstance = axios.create({
 
 
 axiosInstance.interceptors.request.use(async (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
-
-    const clientInfo = getClientInfoFromCookie();
-    if (clientInfo) {
-        Object.entries(clientInfo).forEach(([key, value]) => {
-        config.headers[key] = value;
-        });
-    }
+  console.log("config", config);
+    // const token = localStorage.getItem('token');
+    // if (token) {
+    //     config.headers.Authorization = `Bearer ${token}`;
+    // }
 
     // Check if the request has a custom base URL in the headers
-    if (config.headers['USE-CUSTOM-BASE-URL']) {
-        config.baseURL = config.headers['USE-CUSTOM-BASE-URL'];
-      }
+    // if (config.headers['USE-CUSTOM-BASE-URL']) {
+    //     config.baseURL = config.headers['USE-CUSTOM-BASE-URL'];
+    //   }
 
     // Clean up the custom header
-    delete config.headers['USE-CUSTOM-BASE-URL'];
+    // delete config.headers['USE-CUSTOM-BASE-URL'];
 
     return config;
 })
@@ -89,31 +80,6 @@ axiosInstance.interceptors.response.use(
       return Promise.reject(errorIntercept);
     },
   );
-  
-// const generateApiToken = () => {
-//   // expiry time in seconds (30 seconds)
-//   const EXPIRY_TIME = 30 * 1000;
-
-//   // Get current time
-//   const currentTime = new Date();
-
-//   // Convert current time to IST (UTC +5:30)
-//   const istCurrentTime = new Date(currentTime.getTime() + (5 * 60 + 30) * 60 * 1000).toISOString();
-  
-//   // Add 30 seconds to current time
-//   const expiryTime = new Date(currentTime.getTime() + EXPIRY_TIME);
-  
-//   // Convert expiry time to IST (UTC +5:30) and output in ISO format
-//   const istExpiryTime = new Date(expiryTime.getTime() + (5 * 60 + 30) * 60 * 1000).toISOString();
-//   const timestampData = {
-//       currentTimestamp: istCurrentTime,
-//       expiryTimestamp: istExpiryTime
-//   };
-
-//   const encryptedData = encryptData(JSON.stringify(timestampData));
-
-//   return encryptedData;
-// };
   
   const AxiosConfig: React.FC<AxiosConfigProps> = ({ children }) => {
     return children;

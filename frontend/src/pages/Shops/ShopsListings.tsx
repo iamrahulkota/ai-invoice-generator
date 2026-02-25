@@ -1,8 +1,10 @@
 import SearchBar from '@/components/common/SearchBar'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { load_shops_list } from '@/redux/Action/actions'
 import { PlusIcon } from 'lucide-react'
 import { useRef, useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from "react-router";
 
 const SHOPS_FILTERS = [
@@ -23,13 +25,38 @@ const SHOPS_FILTERS = [
 export default function ShopsListings() {
 
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const { shops_list } = useSelector((state: any) => state.data);
 
+
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const [activeValue, setActiveValue] = useState<string>('');
     const [query, setQuery] = useState<string | null>(null);
     const [params, setParams] = useState<any>({
         per_page: 10,
         page_no: 1,
     });
+
+    useEffect(() => {
+        const fetchShops = async () => {
+            try {
+                setIsLoading(true);
+                await load_shops_list(dispatch);
+                console.log("SHOP LIST: ", shops_list);
+            } catch (error) {
+                console.log(error);
+            } finally {
+                setIsLoading(false);
+            }
+        }
+
+        fetchShops();
+    }, []);
+
+
+    // useEffect(() => {
+    //     console.log("shops_list", shops_list);
+    // }, [shops_list]);
 
     const handleParamsOnChange = (Key: string, value: any) => {
         const newParams = { ...params, [Key]: value };
