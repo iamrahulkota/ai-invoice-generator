@@ -6,6 +6,7 @@ import AxiosConfig from "@/config/axiosConfig";
 import ScrollToTop from "@/lib/ScrollToTop";
 import { Provider } from "react-redux";
 import store from "@/redux/store";
+import AppWrapper from "./AppWrapper";
 
 export default function ContextWrapper({
   children,
@@ -24,7 +25,7 @@ export default function ContextWrapper({
             />
             <PathTracker />
             <ScrollToTop />
-            {children}
+            <AppWrapper>{children}</AppWrapper>
         </AxiosConfig>
       </Provider>
     </ErrorBoundary>

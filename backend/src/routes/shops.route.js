@@ -8,6 +8,7 @@ import {
     handleUpdateShop,
     handleDeleteShop
 } from "../controllers/shops.controller.js";
+import { verifyToken } from "../middlewares/auth.middleware.js";
 
 // getting a list of shops
 router

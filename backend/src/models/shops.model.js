@@ -36,7 +36,7 @@ const ShopsSchema = new Schema(
   {
     distributor_id: {
       type: Schema.Types.ObjectId,
-      ref: "Distributors",
+      ref: "distributors",
       required: [true, "Distributor reference is required"],
       index: true,
     },

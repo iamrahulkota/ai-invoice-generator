@@ -21,6 +21,15 @@ export const login_user = async (data: any) => {
   }
 };
 
+export const register_user = async (data: any) => {
+  try {
+    const response = await axiosInstance.post(`auth/register`, data);
+    return response?.data;
+  } catch (error: any) {
+    return error?.response?.data;
+  }
+};
+
 export const refreshToken = async () => {
   try {
     const response = await axiosInstance.post(`auth/refresh-token`);
@@ -30,41 +39,42 @@ export const refreshToken = async () => {
   }
 };
 
+// #en
 
 
 
 
-
-const set_shops_list = (data: any) => ({
-  type: types.SHOPS_LIST,
+// #region Shops ----------------------------------------------------------------------------------------------
+const set_shop_list = (data: any) => ({
+  type: types.SHOP_LIST,
   payload: data,
 });
 
-export const load_shops_list = async (
+export const load_shop_list = async (
   dispatch: Dispatch,
   params: object = {},
 ) => {
   try {
     const response = await axiosInstance.get(`shops`, { params });
-    dispatch(set_shops_list(response?.data));
+    dispatch(set_shop_list(response?.data));
     return response?.data;
   } catch (error: any) {
     return error?.response?.data;
   }
 };
 
-const set_shops_data = (data: any) => ({
+const set_shop_data = (data: any) => ({
   type: types.SHOP_DATA,
   payload: data,
 });
 
-export const load_shops_data = async (
+export const load_shop_data = async (
   dispatch: Dispatch,
   shopId: string,
 ) => {
   try {
     const response = await axiosInstance.get(`shops/${shopId}`);
-    dispatch(set_shops_data(response?.data));
+    dispatch(set_shop_data(response?.data));
     return response?.data;
   } catch (error: any) {
     return error?.response?.data;
@@ -97,3 +107,72 @@ export const delete_shop = async (shopId: string) => {
     return error?.response?.data;
   }
 };
+
+//#endregion ----------------------------------------------------------------------------------------------
+
+
+// #region Invoice ----------------------------------------------------------------------------------------------
+const set_invoice_list = (data: any) => ({
+  type: types.INVOICE_LIST,
+  payload: data,
+});
+
+export const load_invoice_list = async (
+  dispatch: Dispatch,
+  params: object = {},
+) => {
+  try {
+    const response = await axiosInstance.get(`invoices`, { params });
+    dispatch(set_invoice_list(response?.data));
+    return response?.data;
+  } catch (error: any) {
+    return error?.response?.data;
+  }
+};
+
+const set_invoice_data = (data: any) => ({
+  type: types.INVOICE_DATA,
+  payload: data,
+});
+
+export const load_invoice_data = async (
+  dispatch: Dispatch,
+  invoiceId: string,
+) => {
+  try {
+    const response = await axiosInstance.get(`invoice/${invoiceId}`);
+    dispatch(set_invoice_data(response?.data));
+    return response?.data;
+  } catch (error: any) {
+    return error?.response?.data;
+  }
+};
+
+export const create_invoice = async (data: Record<string, unknown>) => {
+  try {
+    const response = await axiosInstance.post(`invoice`, data);
+    return response?.data;
+  } catch (error: any) {
+    return error?.response?.data;
+  }
+};
+
+export const update_invoice = async (invoiceId: string, data: Record<string, unknown>) => {
+  try {
+    const response = await axiosInstance.put(`invoice/${invoiceId}`, data);
+    return response?.data;
+  } catch (error: any) {
+    return error?.response?.data;
+  }
+};
+
+export const delete_invoice = async (invoiceId: string) => {
+  try {
+    const response = await axiosInstance.delete(`invoice/${invoiceId}`);
+    return response?.data;
+  } catch (error: any) {
+    return error?.response?.data;
+  }
+};
+
+//#endregion ----------------------------------------------------------------------------------------------

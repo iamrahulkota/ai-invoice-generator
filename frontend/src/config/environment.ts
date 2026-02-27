@@ -1,40 +1,39 @@
-// import { jwtDecode } from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 
 
 export interface Environment {
     mode: 'development' | 'production';
+    userData: DecodedToken;
     apiUrl: string;
-    isProduction: boolean;
     token: string;
     basename: string;
     timeout: number;
-
   }
 
-  // interface DecodedToken {
-  //   id?: string | number;
-  //   exp?: number;
-  // }
+  interface DecodedToken {
+    id?: string | number;
+    exp?: number;
+  }
 
 
-  // const decoded_token: DecodedToken = (() => {
-  //   const token = localStorage.getItem("token");
-  //   if (!token) return {};
-  //   try {
-  //     const decodedToken:any = jwtDecode(token);
-  //     return {
-  //       ...decodedToken,
-  //     };
-  //   } catch (error) {
-  //     console.warn('FAILED TO DECODE JWT TOKEN: ', error);
-  //     return {};
-  //   }
-  // })();
+  const decoded_token: DecodedToken = (() => {
+    const token = localStorage.getItem("token");
+    if (!token) return {};
+    try {
+      const decodedToken:any = jwtDecode(token);
+      return {
+        ...decodedToken,
+      };
+    } catch (error) {
+      console.warn('FAILED TO DECODE JWT TOKEN: ', error);
+      return {};
+    }
+  })();
 
 
 export const environment: Environment = {
     mode: import.meta.env.MODE as 'development' | 'production',
-    isProduction: import.meta.env.MODE === 'production',
+    userData: decoded_token,
 
     apiUrl: import.meta.env.VITE_API_URL,
     basename: import.meta.env.VITE_BASE_URL || '',

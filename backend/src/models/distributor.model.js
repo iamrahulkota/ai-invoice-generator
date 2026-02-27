@@ -50,10 +50,9 @@ const DistributorSchema = new Schema(
       type: Boolean,
       default: false,
     },
-    // Refresh tokens stored here — supports multiple devices
-    refresh_tokens: {
-      type: [String],
-      default: [],
+    token: {
+      type: String, 
+      default: null
     },
     is_active: {
       type: Boolean,

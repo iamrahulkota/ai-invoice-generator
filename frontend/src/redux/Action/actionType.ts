@@ -15,5 +15,7 @@ export type Action = {
   export const LOGIN_USER_FAILURE = 'LOGIN_USER_FAILURE';
 
 
-  export const SHOPS_LIST = 'SHOPS_LIST';
+  export const SHOP_LIST = 'SHOP_LIST';
   export const SHOP_DATA = 'SHOP_DATA';
+  export const INVOICE_LIST = 'INVOICE_LIST';
+  export const INVOICE_DATA = 'INVOICE_DATA';

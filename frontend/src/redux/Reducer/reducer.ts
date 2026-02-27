@@ -27,9 +27,14 @@ export const initialState: any = {
 
 
   // shopsActions
-  shops_list: [],
-  shops_list_meta: {},
+  shop_list: [],
+  shop_list_meta: {},
   shop_data: {},
+
+  // invoiceActions
+  invoice_list: [],
+  invoice_list_meta: {},
+  invoice_data: {},
 
 };
 
@@ -68,16 +73,27 @@ const DataReducers = (state: any = initialState, action: types.Action) => {
         token: null,
         userId: null,
       };
-    case types.SHOPS_LIST:
+    case types.SHOP_LIST:
       return {
         ...state,
-        shops_list: action.payload.data,
-        shops_list_meta: action.payload.meta,
+        shop_list: action.payload.data,
+        shop_list_meta: action.payload.meta,
       };
     case types.SHOP_DATA:
       return {
         ...state,
         shop_data: action.payload.data,
+      };
+    case types.INVOICE_LIST:
+      return {
+        ...state,
+        invoice_list: action.payload.data,
+        invoice_list_meta: action.payload.meta,
+      };
+    case types.INVOICE_DATA:
+      return {
+        ...state,
+        invoice_data: action.payload.data,
       };
     default:
       return state;

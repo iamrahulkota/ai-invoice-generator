@@ -47,18 +47,18 @@ export const axiosInstance: AxiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(async (config) => {
   console.log("config", config);
-    // const token = localStorage.getItem('token');
-    // if (token) {
-    //     config.headers.Authorization = `Bearer ${token}`;
-    // }
+    const token = localStorage.getItem('token');
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
 
     // Check if the request has a custom base URL in the headers
-    // if (config.headers['USE-CUSTOM-BASE-URL']) {
-    //     config.baseURL = config.headers['USE-CUSTOM-BASE-URL'];
-    //   }
+    if (config.headers['USE-CUSTOM-BASE-URL']) {
+        config.baseURL = config.headers['USE-CUSTOM-BASE-URL'];
+      }
 
     // Clean up the custom header
-    // delete config.headers['USE-CUSTOM-BASE-URL'];
+    delete config.headers['USE-CUSTOM-BASE-URL'];
 
     return config;
 })

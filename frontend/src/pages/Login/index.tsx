@@ -16,6 +16,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { axiosInstance } from "@/config/axiosConfig";
+import { login_user } from "@/redux/Action/actions";
 
 const loginSchema = z.object({
   email: z.string().min(1, "Email is required").email("Enter a valid email address"),
@@ -34,9 +35,11 @@ export default function Login() {
   });
 
   const onSubmit = async (data: LoginValues) => {
+    console.log("data login values", data);
     setIsSubmitting(true);
     try {
-      const response = await axiosInstance.post<{ token?: string; access_token?: string }>("/auth/login", data);
+      const response = await login_user(data);
+      console.log("response login_user", response)
       const token = response?.data?.token ?? response?.data?.access_token;
       if (token) {
         localStorage.setItem("token", token);

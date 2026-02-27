@@ -26,7 +26,6 @@ export const register = async (req, res) => {
             bank_details,
         } = req.body;
 
-        // 1. Check duplicate email
         const existing = await Distributor.findOne({
             email
         });
@@ -39,10 +38,8 @@ export const register = async (req, res) => {
             });
         }
 
-        // 2. Hash password
         const password_hash = await bcrypt.hash(password, 12);
 
-        // 3. Create distributor with business profile in one shot
         const distributor = await Distributor.create({
             email,
             password: password_hash,
@@ -66,7 +63,7 @@ export const register = async (req, res) => {
             },
             data: {
                 id: distributor._id,
-                email: distributor.email
+                email: distributor.email,
             },
         });
     } catch (error) {
@@ -74,7 +71,7 @@ export const register = async (req, res) => {
         return res.status(500).json({
             meta: {
                 status: 500,
-                message: "Server error",
+                message: "Internal server error",
             },
             error: error.message,
         });
@@ -89,7 +86,6 @@ export const login = async (req, res) => {
             password
         } = req.body;
 
-        // 1. Find user
         const distributor = await Distributor.findOne({
             email
         });
@@ -102,7 +98,6 @@ export const login = async (req, res) => {
             });
         }
 
-        // 2. Compare password
         const isMatch = await bcrypt.compare(password, distributor.password);
         if (!isMatch) {
             return res.status(401).json({
@@ -113,16 +108,21 @@ export const login = async (req, res) => {
             });
         }
 
-        // 3. Generate tokens
-        const accessToken = generateAccessToken(distributor._id);
-        const refreshToken = generateRefreshToken(distributor._id);
+        const accessToken = generateAccessToken(
+            distributor._id,
+            distributor.email,
+            distributor.business_profile.owner_name
+        );
+        const refreshToken = generateRefreshToken(
+            distributor._id,
+            distributor.email,
+            distributor.business_profile.owner_name
+        );
 
-        // 4. Store refresh token in DB + update last_login
-        distributor.refresh_tokens.push(refreshToken);
+        distributor.token = refreshToken;
         distributor.last_login = new Date();
         await distributor.save();
 
-        // 5. Set refresh token as httpOnly cookie
         setRefreshTokenCookie(res, refreshToken);
 
         return res.status(200).json({
@@ -145,7 +145,7 @@ export const login = async (req, res) => {
         return res.status(500).json({
             meta: {
                 status: 500,
-                message: "Server error",
+                message: "Internal server error",
             },
             error: error.message,
         });
@@ -165,7 +165,6 @@ export const refreshToken = async (req, res) => {
             });
         }
 
-        // 1. Verify the refresh token
         let decoded;
         try {
             decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
@@ -178,9 +177,8 @@ export const refreshToken = async (req, res) => {
             });
         }
 
-        // 2. Check token exists in DB (rotation check)
         const distributor = await Distributor.findById(decoded.id);
-        if (!distributor || !distributor.refresh_tokens.includes(token)) {
+        if (!distributor || distributor.token !== token) {
             return res.status(403).json({
                 meta: {
                     status: 403,
@@ -189,13 +187,19 @@ export const refreshToken = async (req, res) => {
             });
         }
 
-        // 3. Rotate: remove old, issue new
-        distributor.refresh_tokens = distributor.refresh_tokens.filter((t) => t !== token);
-        const newRefreshToken = generateRefreshToken(distributor._id);
-        distributor.refresh_tokens.push(newRefreshToken);
+        const newRefreshToken = generateRefreshToken(
+            distributor._id,
+            distributor.email,
+            distributor.business_profile.owner_name
+        );
+        distributor.token = newRefreshToken;
         await distributor.save();
 
-        const newAccessToken = generateAccessToken(distributor._id);
+        const newAccessToken = generateAccessToken(
+            distributor._id,
+            distributor.email,
+            distributor.business_profile.owner_name
+        );
         setRefreshTokenCookie(res, newRefreshToken);
 
         return res.status(200).json({
@@ -204,7 +208,7 @@ export const refreshToken = async (req, res) => {
                 message: "Token refreshed successfully",
             },
             data: {
-                accessToken: newAccessToken
+                accessToken: newAccessToken,
             },
         });
     } catch (error) {
@@ -212,7 +216,7 @@ export const refreshToken = async (req, res) => {
         return res.status(500).json({
             meta: {
                 status: 500,
-                message: "Server error",
+                message: "Internal server error",
             },
             error: error.message,
         });
@@ -222,18 +226,12 @@ export const refreshToken = async (req, res) => {
 // ── POST /api/v1/auth/logout ─────────────────────────────
 export const logout = async (req, res) => {
     try {
-        const token = req.cookies?.refreshToken;
+        await Distributor.findByIdAndUpdate(req.distributor.id, {
+            $set: {
+                token: null
+            },
+        });
 
-        if (token) {
-            // Remove this specific refresh token from DB (single device logout)
-            await Distributor.findByIdAndUpdate(req.distributor.id, {
-                $pull: {
-                    refresh_tokens: token
-                },
-            });
-        }
-
-        // Clear the cookie
         res.clearCookie("refreshToken", {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
@@ -251,7 +249,7 @@ export const logout = async (req, res) => {
         return res.status(500).json({
             meta: {
                 status: 500,
-                message: "Server error",
+                message: "Internal server error",
             },
             error: error.message,
         });
