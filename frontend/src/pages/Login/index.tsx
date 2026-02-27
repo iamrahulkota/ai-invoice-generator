@@ -15,8 +15,8 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { axiosInstance } from "@/config/axiosConfig";
-import { login_user } from "@/redux/Action/actions";
+import { load_user_data, login_user, set_isAuthenticated } from "@/redux/Action/actions";
+import { useDispatch } from "react-redux";
 
 const loginSchema = z.object({
   email: z.string().min(1, "Email is required").email("Enter a valid email address"),
@@ -27,6 +27,7 @@ type LoginValues = z.infer<typeof loginSchema>;
 
 export default function Login() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<LoginValues>({
@@ -34,17 +35,26 @@ export default function Login() {
     defaultValues: { email: "", password: "" },
   });
 
+
+  const getUserDetails = async (userId: string) => {
+    try {
+      await load_user_data(dispatch, userId);
+      navigate("/dashboard", { replace: true });
+    }
+    catch (e: any) {
+
+    }
+  }
+
   const onSubmit = async (data: LoginValues) => {
     console.log("data login values", data);
     setIsSubmitting(true);
     try {
       const response = await login_user(data);
-      console.log("response login_user", response)
-      const token = response?.data?.token ?? response?.data?.access_token;
-      if (token) {
-        localStorage.setItem("token", token);
-        toast.success("Logged in successfully");
-        navigate("/dashboard", { replace: true });
+      if (response?.meta?.status && response?.data?.token) {
+        localStorage.setItem('token', response.data.token);
+        set_isAuthenticated(dispatch, true);
+        getUserDetails(response.data._id);
       } else {
         toast.error("Invalid response from server");
       }

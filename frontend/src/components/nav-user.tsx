@@ -26,6 +26,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
+import { useSelector } from "react-redux"
 
 export function NavUser({
   user,
@@ -36,7 +37,10 @@ export function NavUser({
     avatar: string
   }
 }) {
-  const { isMobile } = useSidebar()
+  const { isMobile } = useSidebar();
+  const { user_data } = useSelector((state: any) => state.data);
+
+  console.log("user_data", user_data);
 
   return (
     <SidebarMenu>
@@ -52,9 +56,9 @@ export function NavUser({
                 <AvatarFallback className="rounded-lg">CN</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{user.name}</span>
+                <span className="truncate font-medium">{user_data?.business_profile?.owner_name}</span>
                 <span className="text-muted-foreground truncate text-xs">
-                  {user.email}
+                  {user_data.email}
                 </span>
               </div>
               <IconDotsVertical className="ml-auto size-4" />

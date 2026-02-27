@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import { shopsRoute } from "./routes/shops.route.js";
 import { authRoute } from "./routes/auth.route.js";
+import { usersRoute } from "./routes/users.route.js";
 
 const app = express();
 
@@ -16,6 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 
 
 app.use("/api/v1/auth", authRoute);
+app.use("/api/v1/user", usersRoute);
 app.use("/api/v1/shops", shopsRoute);
 
 

@@ -39,6 +39,24 @@ export const refreshToken = async () => {
   }
 };
 
+const set_user_data = (data: any) => ({
+  type: types.USER_DATA,
+  payload: data,
+});
+
+export const load_user_data = async (
+  dispatch: Dispatch,
+  userId: string,
+) => {
+  try {
+    const response = await axiosInstance.get(`user/${userId}`);
+    dispatch(set_user_data(response?.data));
+    return response?.data;
+  } catch (error: any) {
+    return error?.response?.data;
+  }
+};
+
 // #en
 
 

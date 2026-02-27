@@ -25,6 +25,8 @@ export const initialState: any = {
   isAuthenticated: !!localStorage.getItem('token'),
   userId: null,
 
+  user_data: {},
+
 
   // shopsActions
   shop_list: [],
@@ -73,6 +75,11 @@ const DataReducers = (state: any = initialState, action: types.Action) => {
         token: null,
         userId: null,
       };
+    case types.USER_DATA:
+      return {
+        ...state,
+        user_data: action.payload.data,
+      }
     case types.SHOP_LIST:
       return {
         ...state,

@@ -4,6 +4,7 @@ import { NavLink } from "./NavLink";
 import { Heart } from "lucide-react";
 import { AnimatedThemeToggler } from "@/components/common/animated-theme-toggler";
 import { useNavigate } from "react-router";
+import { useSelector } from "react-redux";
 
 export interface NavItem {
   label: string;
@@ -23,6 +24,8 @@ const navItems: NavItem[] = [
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const { isAuthenticated } = useSelector((state: any) => state.data);
+
   const handleLoginButton = () => {
     navigate('/login');
   };
@@ -45,9 +48,13 @@ const Navbar = () => {
         </div>
         <div className="flex items-center gap-3">
             <AnimatedThemeToggler duration={600} />
+            {isAuthenticated ? (
+                <>df</>
+            ) : (
             <Button variant="default" size="sm" onClick={handleLoginButton}>
               Login
             </Button>
+            )}
         </div>
       </div>
     </div>
