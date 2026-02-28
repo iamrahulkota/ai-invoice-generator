@@ -78,7 +78,7 @@ const DataReducers = (state: any = initialState, action: types.Action) => {
     case types.USER_DATA:
       return {
         ...state,
-        user_data: action.payload.data,
+        user_data: action.payload,
       }
     case types.SHOP_LIST:
       return {

@@ -9,7 +9,6 @@ export type Action = {
   export const IS_AUTHENTICATED = 'IS_AUTHENTICATED';
   
   export const USER_DATA = 'USER_DATA';
-  export const USER_LIST = 'USER_LIST';
   
   export const LOGIN_USER_SUCCESS = 'LOGIN_USER_SUCCESS';
   export const LOGIN_USER_FAILURE = 'LOGIN_USER_FAILURE';

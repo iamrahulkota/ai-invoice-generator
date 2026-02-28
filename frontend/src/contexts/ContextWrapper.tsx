@@ -19,7 +19,7 @@ export default function ContextWrapper({
         <AxiosConfig>
             <Toaster
               richColors
-              position="top-right"
+              position="bottom-right"
               visibleToasts={3}
               closeButton={true}
             />

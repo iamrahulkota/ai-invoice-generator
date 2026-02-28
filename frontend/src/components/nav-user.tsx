@@ -26,21 +26,14 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
-import { useSelector } from "react-redux"
 
 export function NavUser({
   user,
 }: {
-  user: {
-    name: string
-    email: string
-    avatar: string
-  }
+  user: any;
 }) {
   const { isMobile } = useSidebar();
-  const { user_data } = useSelector((state: any) => state.data);
-
-  console.log("user_data", user_data);
+  console.log("user", user);
 
   return (
     <SidebarMenu>
@@ -53,12 +46,12 @@ export function NavUser({
             >
               <Avatar className="h-8 w-8 rounded-lg grayscale">
                 <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                <AvatarFallback className="rounded-lg">{user.business_profile.owner_name.charAt(0) || "IG"}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{user_data?.business_profile?.owner_name}</span>
+                <span className="truncate font-medium">{user?.business_profile?.owner_name || "No name"}</span>
                 <span className="text-muted-foreground truncate text-xs">
-                  {user_data.email}
+                  {user.email || "No email"}
                 </span>
               </div>
               <IconDotsVertical className="ml-auto size-4" />

@@ -17,6 +17,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { load_user_data, login_user, set_isAuthenticated } from "@/redux/Action/actions";
 import { useDispatch } from "react-redux";
+import { jwtDecode } from "jwt-decode";
 
 const loginSchema = z.object({
   email: z.string().min(1, "Email is required").email("Enter a valid email address"),
@@ -47,14 +48,17 @@ export default function Login() {
   }
 
   const onSubmit = async (data: LoginValues) => {
-    console.log("data login values", data);
     setIsSubmitting(true);
     try {
       const response = await login_user(data);
       if (response?.meta?.status && response?.data?.token) {
         localStorage.setItem('token', response.data.token);
         set_isAuthenticated(dispatch, true);
-        getUserDetails(response.data._id);
+        const decodedToken: any = jwtDecode(response.data.token);
+        const user_data = {
+          ...decodedToken,
+        };
+        dispatch({type: 'USER', payload: user_data});
       } else {
         toast.error("Invalid response from server");
       }

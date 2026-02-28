@@ -20,13 +20,9 @@ import {
 } from "@/components/ui/sidebar";
 import { Link, Outlet, useLocation } from "react-router";
 import { SiteHeader } from "@/components/site-header";
+import { useSelector } from "react-redux";
 
 const data = {
-  user: {
-    name: "ai-invoice-generator",
-    email: "ai-invoice-generator@gmail.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
   navMain: [
     {
       key: 'dashboard',
@@ -68,6 +64,7 @@ const getModuleFromPath = (path: string) => {
 
 export default function DashboardLayout({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const location = useLocation();
+  const { user_data } = useSelector((state: any) => state.data);
   const activeModule = getModuleFromPath(location.pathname);
 
   return (
@@ -95,7 +92,7 @@ export default function DashboardLayout({ ...props }: React.ComponentProps<typeo
           {/* <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
         </SidebarContent>
         <SidebarFooter>
-          <NavUser user={data.user} />
+          <NavUser user={user_data} />
         </SidebarFooter>
       </Sidebar>
       <div className="bg-background w-full overflow-y-auto overflow-x-hidden flex-col m-0 md:m-2.5 rounded-lg">
