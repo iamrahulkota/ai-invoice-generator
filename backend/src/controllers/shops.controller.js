@@ -3,9 +3,11 @@ import { Shops } from '../models/shops.model.js';
 export const handleGetAllShops = async (req, res) => {
     try {
         const { status, search } = req.query;
+        // Resolve distributor id from middleware (req.distributor)
+        const distributorId = req.distributor._id;
 
         // Build filter — always scope to logged-in distributor
-        const filter = { distributor_id: req._id };
+        const filter = { distributor_id: distributorId };
         if (status === "active") {
             filter.is_active = true;
         } else if (status === "inactive") {
@@ -43,7 +45,10 @@ export const handleGetAllShops = async (req, res) => {
 export const handleGetShopById = async (req, res) => {
     try {
         const { shopId } = req.params;
-        const shop = await Shops.findById(shopId);
+        const distributorId = req.distributor._id;
+
+        // Ensure the shop belongs to the authenticated distributor
+        const shop = await Shops.findOne({ _id: shopId, distributor_id: distributorId });
         if (!shop) {
             return res.status(404).json({
                 meta: {
@@ -84,10 +89,12 @@ export const handleCreateShop = async (req, res) => {
       });
     }
 
-    const newShop = new Shops({
-      ...req.body,
-      distributor_id: req.distributor._id,  // ← from verifyToken middleware
-    });
+        const distributorId = req.distributor._id;
+
+        const newShop = new Shops({
+            ...req.body,
+            distributor_id: distributorId,  // ← from verifyToken middleware
+        });
     await newShop.save();
 
     return res.status(201).json({
@@ -113,19 +120,17 @@ export const handleUpdateShop = async (req, res) => {
         const { shopId } = req.params;
         const updateData = req.body;
 
-        const updatedShop = await Shops.findByIdAndUpdate(
-            shopId,
+        const distributorId = req.distributor._id;
+
+        // Only update if shop belongs to this distributor
+        const updatedShop = await Shops.findOneAndUpdate(
+            { _id: shopId, distributor_id: distributorId },
             updateData,
             { new: true, runValidators: true }
         );
 
         if (!updatedShop) {
-            return res.status(404).json({
-                meta: {
-                    status: 404,
-                    message: "Shop not found"
-                }
-            });
+            return res.status(404).json({ meta: { status: 404, message: "Shop not found" } });
         }
 
         return res.status(200).json({
@@ -150,15 +155,13 @@ export const handleDeleteShop = async (req, res) => {
     try {
         const { shopId } = req.params;
 
-        const deletedShop = await Shops.findByIdAndDelete(shopId);
+        const distributorId = req.distributor._id;
+
+        // Only delete if shop belongs to this distributor
+        const deletedShop = await Shops.findOneAndDelete({ _id: shopId, distributor_id: distributorId });
 
         if (!deletedShop) {
-            return res.status(404).json({
-                meta: {
-                    status: 404,
-                    message: "Shop not found"
-                }
-            });
+            return res.status(404).json({ meta: { status: 404, message: "Shop not found" } });
         }
 
         return res.status(200).json({
