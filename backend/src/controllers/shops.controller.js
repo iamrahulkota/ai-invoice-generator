@@ -72,6 +72,7 @@ export const handleGetShopById = async (req, res) => {
 
 export const handleCreateShop = async (req, res) => {
   try {
+    console.log("REQ BODY:", req.body);
     const { shop_name, shop_owner_name, contact_number, address } = req.body;
 
     if (!shop_name || !shop_owner_name || !contact_number || !address) {

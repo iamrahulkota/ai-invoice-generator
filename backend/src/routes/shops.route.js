@@ -13,14 +13,14 @@ import { verifyToken } from "../middlewares/auth.middleware.js";
 // getting a list of shops
 router
     .route("/")
-    .get(handleGetAllShops)
-    .post(handleCreateShop);
+    .get(verifyToken, handleGetAllShops)
+    .post(verifyToken, handleCreateShop);
 
 // getting, updating, or deleting a specific shop by ID
 router
     .route("/:shopId")
-    .get(handleGetShopById)
-    .put(handleUpdateShop)
-    .delete(handleDeleteShop);
+    .get(verifyToken, handleGetShopById)
+    .put(verifyToken, handleUpdateShop)
+    .delete(verifyToken, handleDeleteShop);
 
 export { router as shopsRoute };

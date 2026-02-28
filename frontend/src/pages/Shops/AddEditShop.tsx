@@ -25,6 +25,7 @@ import { useNavigate, useParams } from 'react-router';
 import { z } from 'zod';
 import { create_shop } from '@/redux/Action/actions';
 import { toast } from 'sonner';
+import { Switch } from '@/components/ui/switch';
 
 const addEditShopSchema = z.object({
   shop_name: z
@@ -91,6 +92,7 @@ const addEditShopSchema = z.object({
       .string()
       .regex(/^\d{6}$/, "Enter a valid 6-digit PIN code"),
   }),
+  is_active: z.boolean().default(true),
 });
 
 type AddEditShopValues = z.infer<typeof addEditShopSchema>
@@ -120,6 +122,7 @@ export default function AddEditShop() {
         house_no: "",
         pin_code: "",
       },
+      is_active: true,
     },
   });
 
@@ -297,7 +300,7 @@ export default function AddEditShop() {
                       <FormControl>
                         <Textarea
                           placeholder="Optional notes about this shop"
-                          className="min-h-[80px] resize-none"
+                          className="h-[80px] resize-none"
                           {...field}
                         />
                       </FormControl>
@@ -384,6 +387,22 @@ export default function AddEditShop() {
                   )}
                 />
               </div>
+              <FormField
+                  control={form.control}
+                  name="is_active"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Is Active *</FormLabel>
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
             </div>
 
             <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:justify-end">

@@ -119,7 +119,7 @@ export const login = async (req, res) => {
             distributor.business_profile.owner_name
         );
 
-        distributor.token = refreshToken;
+        distributor.token = accessToken;
         distributor.last_login = new Date();
         await distributor.save();
 
@@ -130,15 +130,7 @@ export const login = async (req, res) => {
                 status: 200,
                 message: "Login successful",
             },
-            data: distributor,
-            // data: {
-            //     accessToken,
-            //     distributor: {
-            //         id: distributor._id,
-            //         email: distributor.email,
-            //         business_profile: distributor.business_profile,
-            //     },
-            // },
+            data: distributor
         });
     } catch (error) {
         console.error("Login error:", error);
