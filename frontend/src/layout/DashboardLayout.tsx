@@ -1,14 +1,12 @@
 import { SidebarProvider } from "@/components/ui/sidebar";
 import React from "react";
+import { handleLogout } from "@/lib/utils";
 import {
   IconChartBar,
-  IconHelp,
-  IconInnerShadowTop,
-  IconSettings,
   IconBuildingStore,
+  IconPackage,
 } from "@tabler/icons-react";
 import { NavMain } from "@/components/nav-main";
-import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
   SidebarContent,
@@ -21,6 +19,7 @@ import {
 import { Link, Outlet, useLocation } from "react-router";
 import { SiteHeader } from "@/components/site-header";
 import { useSelector } from "react-redux";
+import { NavUser } from "@/components/nav-user";
 
 const data = {
   navMain: [
@@ -36,20 +35,13 @@ const data = {
       url: "/dashboard/shops",
       icon: IconBuildingStore,
     },
-  ],
-  navSecondary: [
     {
-      key: 'settings',
-      title: "Settings",
-      url: "/settings",
-      icon: IconSettings,
-    },
-    {
-      key: 'help',
-      title: "Get Help",
-      url: "/help",
-      icon: IconHelp,
-    },
+      key: 'stock',
+      title: "Stock",
+      url: "/dashboard/stock",
+      icon: IconPackage,
+      locked: true,
+    }
   ],
 };
 
@@ -64,8 +56,13 @@ const getModuleFromPath = (path: string) => {
 
 export default function DashboardLayout({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const location = useLocation();
-  const { user_data } = useSelector((state: any) => state.data);
+  const { user } = useSelector((state: any) => state.data);
   const activeModule = getModuleFromPath(location.pathname);
+
+
+  const handleLogoutClick = () => {
+    handleLogout();
+  }
 
   return (
     <SidebarProvider className="bg-sidebar">
@@ -78,7 +75,6 @@ export default function DashboardLayout({ ...props }: React.ComponentProps<typeo
                 className="data-[slot=sidebar-menu-button]:p-1.5"
               >
                 <Link to={"/"}>
-                  <IconInnerShadowTop className="size-5" />
                   <span className="text-base font-semibold">
                     Invoice Generator
                   </span>
@@ -89,10 +85,9 @@ export default function DashboardLayout({ ...props }: React.ComponentProps<typeo
         </SidebarHeader>
         <SidebarContent>
           <NavMain items={data.navMain} activeModule={activeModule} />
-          {/* <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
         </SidebarContent>
         <SidebarFooter>
-          <NavUser user={user_data} />
+          <NavUser user={user} handleLogoutClick={handleLogoutClick} />
         </SidebarFooter>
       </Sidebar>
       <div className="bg-background w-full overflow-y-auto overflow-x-hidden flex-col m-0 md:m-2.5 rounded-lg">

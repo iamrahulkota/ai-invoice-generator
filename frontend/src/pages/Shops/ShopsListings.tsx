@@ -1,4 +1,5 @@
 import CustomShadcnTable from "@/components/common/CustomShadcnTable";
+import ToggleGroup from "@/components/common/ToggleGroup";
 import SearchBar from "@/components/common/SearchBar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -15,6 +16,7 @@ import { useRef, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
+import ShopCard from "./ShopCard";
 
 const SHOPS_FILTERS = [
   {
@@ -37,6 +39,7 @@ export default function ShopsListings() {
   const { shop_list, shop_list_meta } = useSelector((state: any) => state.data);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [alignment, setAlignment] = useState<'grid' | 'list'>('grid');
   const [activeValue, setActiveValue] = useState<string>("");
   const [query, setQuery] = useState<string | null>(null);
   const [params, setParams] = useState<any>({
@@ -60,6 +63,11 @@ export default function ShopsListings() {
   const handleParamsOnChange = (Key: string, value: any) => {
     const newParams = { ...params, [Key]: value };
     setParams(newParams);
+  };
+
+  const handleAlignment = (newAlignment: any) => {
+    if (!newAlignment) return;
+    setAlignment(newAlignment);
   };
 
   const AddNewShop = () => {
@@ -104,6 +112,25 @@ export default function ShopsListings() {
       toast.error(response?.meta?.message || "Failed to delete the shop");
     }
   }
+
+  const menuOptions = [
+    {
+      label: 'View',
+      icon: 'eye',
+      onClick: (item: any) => handleViewShop(item),
+    },
+    {
+      label: 'Edit',
+      icon: 'pencil',
+      onClick: (item: any) => handleEditShop(item),
+    },
+    {
+      label: 'Delete',
+      icon: 'trash',
+      onClick: (item: any) => handleDeleteShop(item),
+      className: 'text-destructive',
+    },
+  ]
 
   const headCells = [
     {
@@ -201,6 +228,7 @@ export default function ShopsListings() {
             </Button>
             <SearchBar query={[query, setQuery]} placeholder="Search..." />
           </div>
+          <div className="flex items-center gap-2">
           <Select
             value={activeValue}
             onValueChange={(value) => {
@@ -219,18 +247,35 @@ export default function ShopsListings() {
               ))}
             </SelectContent>
           </Select>
+            <ToggleGroup
+              alignment={alignment}
+              handleAlignment={handleAlignment}
+            />
+          </div>
         </div>
         <div className="">
           {isLoading ? (
             <Loader2 className="size-6 animate-spin mx-auto my-20" />
+          ) : shop_list && shop_list.length > 0 ? (
+            alignment === 'grid' ? (
+              <div
+                className="grid grid-cols-[repeat(auto-fill,minmax(18rem,1fr))] gap-4"
+              >
+                {shop_list.map((item: any, index: number) => (
+                    <ShopCard key={index} item={item} menuOptions={menuOptions} handleViewShop={handleViewShop} />
+                ))}
+              </div>
+            ) : (
+               <CustomShadcnTable
+                  headCells={headCells}
+                  data={shop_list}
+                  pagination={false}
+                  setParams={setParams}
+                  meta_data={shop_list_meta}
+              />
+            )
           ) : (
-            <CustomShadcnTable
-              idPrefix="shops-list-table"
-              headCells={headCells}
-              data={shop_list}
-              setParams={setParams}
-              meta_data={shop_list_meta?.pagination || params}
-            />
+            <p className="text-center py-20">No shops found.</p>
           )}
         </div>
       </div>

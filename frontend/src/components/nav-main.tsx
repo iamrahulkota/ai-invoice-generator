@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/sidebar"
 import { useNavigate } from "react-router"
 import { cn } from "@/lib/utils"
+import { Lock } from "lucide-react"
 
 export function NavMain({
   items,
@@ -19,6 +20,7 @@ export function NavMain({
     url: string
     icon?: Icon
     key: string
+    locked?: boolean
   }[]
   activeModule: string
 }) {
@@ -38,11 +40,13 @@ export function NavMain({
               <SidebarMenuButton 
                 tooltip={item.title} 
                 onClick={() => handleClickButton(item.key)} 
+                disabled={item.locked}
                 // isActive={activeModule === item.key}
                 className={cn(activeModule === item.key && 'bg-foreground text-background hover:bg-foreground hover:text-background')}
               >
-                {item.icon && <item.icon />}
-                <span>{item.title}</span>
+                  {item.icon && <item.icon />}
+                  <span>{item.title}</span>
+                  {item.locked && <span className="text-xs text-muted-foreground">(coming soon)</span>}
               </SidebarMenuButton>
             </SidebarMenuItem>
           ))}
