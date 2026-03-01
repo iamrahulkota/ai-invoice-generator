@@ -15,9 +15,11 @@ import DashboardLayout from "./layout/DashboardLayout";
 import Dashboard from "./pages/Dashboard";
 import Shops from "./pages/Shops";
 import AddEditShop from "./pages/Shops/AddEditShop";
-import Invoices from "./pages/Invoices";
-import ViewInvoice from "./pages/ViewInvoice";
 import ShopsListings from "./pages/Shops/ShopsListings";
+import Invoices from "./pages/Invoices";
+import InvoicesListings from "./pages/Invoices/InvoicesListings";
+import AddEditInvoice from "./pages/Invoices/AddEditInvoice";
+import ViewInvoice from "./pages/ViewInvoice";
 import Contact from "./pages/Contact";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -82,7 +84,9 @@ const router = createBrowserRouter(
             <Route path="add-new-shop" element={<AddEditShop />} />
             <Route path="edit-shop/:shopId" element={<AddEditShop />} />
             <Route path=":shopId" element={<Invoices />}>
-              <Route path="invoice/:invoiceId" element={<ViewInvoice />} />
+              <Route index element={<InvoicesListings />} />
+              <Route path="add-new-invoice" element={<AddEditInvoice />} />
+              <Route path="edit-invoice/:invoiceId" element={<AddEditInvoice />} />
             </Route>
           </Route>
         </Route>

@@ -5,6 +5,7 @@ import {
   IconChartBar,
   IconBuildingStore,
   IconPackage,
+  IconReceipt,
 } from "@tabler/icons-react";
 import { NavMain } from "@/components/nav-main";
 import {
@@ -36,6 +37,13 @@ const data = {
       icon: IconBuildingStore,
     },
     {
+      key: 'invoices',
+      title: "Invoices",
+      url: "/dashboard/invoices",
+      icon: IconReceipt,
+      locked: true,
+    },
+    {
       key: 'stock',
       title: "Stock",
       url: "/dashboard/stock",
@@ -58,7 +66,6 @@ export default function DashboardLayout({ ...props }: React.ComponentProps<typeo
   const location = useLocation();
   const { user } = useSelector((state: any) => state.data);
   const activeModule = getModuleFromPath(location.pathname);
-
 
   const handleLogoutClick = () => {
     handleLogout();
@@ -93,7 +100,7 @@ export default function DashboardLayout({ ...props }: React.ComponentProps<typeo
       <div className="bg-background w-full overflow-y-auto overflow-x-hidden flex-col m-0 md:m-2.5 rounded-lg">
         <SiteHeader activeModule={activeModule} />
         <div className="p-2 md:p-4">
-        <Outlet />
+            <Outlet />
         </div>
       </div>
     </SidebarProvider>
