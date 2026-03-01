@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import ShopCard from "./ShopCard";
+import { IconEye, IconPencil, IconTrash } from "@tabler/icons-react";
 
 const SHOPS_FILTERS = [
   {
@@ -107,6 +108,7 @@ export default function ShopsListings() {
   const handleDeleteShop = async(item: any) => {
     const response = await delete_shop(item._id);
     if (response?.meta?.status) {
+      load_shop_list(dispatch, {...params});
       toast.success(response?.meta?.message);
     } else {
       toast.error(response?.meta?.message || "Failed to delete the shop");
@@ -116,17 +118,17 @@ export default function ShopsListings() {
   const menuOptions = [
     {
       label: 'View',
-      icon: 'eye',
+      icon: IconEye,
       onClick: (item: any) => handleViewShop(item),
     },
     {
       label: 'Edit',
-      icon: 'pencil',
+      icon: IconPencil,
       onClick: (item: any) => handleEditShop(item),
     },
     {
       label: 'Delete',
-      icon: 'trash',
+      icon: IconTrash,
       onClick: (item: any) => handleDeleteShop(item),
       className: 'text-destructive',
     },

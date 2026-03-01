@@ -48,7 +48,7 @@ export default function MenuComp({
       </DropdownMenuTrigger>
       <DropdownMenuContent side="right" align="start">
         {menuOptions.map((option: any) => {
-            const Icon = option.icon;
+          const Icon = option.icon;
           return (
             <DropdownMenuItem
               key={option.label}
@@ -60,7 +60,7 @@ export default function MenuComp({
               )}
               id={`menu-item-${item?.id}-${option?.id}`}
             >
-              <Icon className="mr-1 h-4 w-4" />
+              <Icon className="mr-0.5 h-4 w-4" />
               {option.label}
             </DropdownMenuItem>
           );
