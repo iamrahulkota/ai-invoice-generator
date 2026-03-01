@@ -9,11 +9,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { load_shop_list } from "@/redux/Action/actions";
-import { PencilIcon, PlusIcon, TrashIcon } from "lucide-react";
+import { delete_shop, load_shop_list } from "@/redux/Action/actions";
+import { Eye, Loader2, Pencil,PlusIcon, Trash } from "lucide-react";
 import { useRef, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
+import { toast } from "sonner";
 
 const SHOPS_FILTERS = [
   {
@@ -86,6 +87,24 @@ export default function ShopsListings() {
     return () => clearTimeout(debounceTimer.current);
   }, [query]);
 
+
+  const handleViewShop = (item: any) => {
+    navigate(`${item._id}`);
+  };
+
+  const handleEditShop = (item: any) => {
+    navigate(`edit-shop/${item._id}`);
+  }
+
+  const handleDeleteShop = async(item: any) => {
+    const response = await delete_shop(item._id);
+    if (response?.meta?.status) {
+      toast.success(response?.meta?.message);
+    } else {
+      toast.error(response?.meta?.message || "Failed to delete the shop");
+    }
+  }
+
   const headCells = [
     {
       key: "shop_name",
@@ -144,6 +163,26 @@ export default function ShopsListings() {
           </Badge>
         );
       },
+    },
+    {
+      key: "actions",
+      label: "Actions",
+      type: "custom",
+      render: (item: any) => {
+        return (
+          <div className="flex gap-1.5 items-center">
+            <Button variant="outline" size="icon-sm" onClick={() => handleViewShop(item)}>
+              <Eye className="size-3" />
+            </Button>
+            <Button variant="outline" size="icon-sm" onClick={() => handleEditShop(item)}>
+              <Pencil className="size-3" />
+            </Button>
+            <Button variant="outline" size="icon-sm" onClick={() => handleDeleteShop(item)}>
+              <Trash className="size-3" />
+            </Button>
+          </div>
+        );
+      },
     }
   ];
 
@@ -182,13 +221,17 @@ export default function ShopsListings() {
           </Select>
         </div>
         <div className="">
-          <CustomShadcnTable
-            idPrefix="shops-list-table"
-            headCells={headCells}
-            data={shop_list}
-            setParams={setParams}
-            meta_data={shop_list_meta?.pagination || params}
-          />
+          {isLoading ? (
+            <Loader2 className="size-6 animate-spin mx-auto my-20" />
+          ) : (
+            <CustomShadcnTable
+              idPrefix="shops-list-table"
+              headCells={headCells}
+              data={shop_list}
+              setParams={setParams}
+              meta_data={shop_list_meta?.pagination || params}
+            />
+          )}
         </div>
       </div>
     </div>

@@ -20,7 +20,7 @@ router
 router
     .route("/:shopId")
     .get(verifyToken, handleGetShopById)
-    .put(verifyToken, handleUpdateShop)
+    .post(verifyToken, handleUpdateShop)
     .delete(verifyToken, handleDeleteShop);
 
 export { router as shopsRoute };

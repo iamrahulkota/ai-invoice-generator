@@ -9,7 +9,7 @@ export default function AppWrapper({
   children: React.ReactNode;
 }) {
   const dispatch = useDispatch();
-  const { isAuthenticated, user } = useSelector(
+  const { isAuthenticated, user, user_data } = useSelector(
     (state: any) => state.data,
   );
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -26,6 +26,11 @@ export default function AppWrapper({
 
     loadUserData();
   }, [dispatch, isAuthenticated, user?.id]);
+
+  useEffect(() => {
+    console.log("AppWrapper - isAuthenticated:", isAuthenticated);
+    console.log("AppWrapper - user_data:", user_data);
+  }, [isAuthenticated, user_data]);
 
   // Reset state when not authenticated
   useEffect(() => {

@@ -15,9 +15,9 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { load_user_data, login_user, set_isAuthenticated } from "@/redux/Action/actions";
+import { login_user, set_isAuthenticated } from "@/redux/Action/actions";
 import { useDispatch } from "react-redux";
-import { jwtDecode } from "jwt-decode";
+import { jwtDecode } from 'jwt-decode';
 
 const loginSchema = z.object({
   email: z.string().min(1, "Email is required").email("Enter a valid email address"),
@@ -36,17 +36,6 @@ export default function Login() {
     defaultValues: { email: "", password: "" },
   });
 
-
-  const getUserDetails = async (userId: string) => {
-    try {
-      await load_user_data(dispatch, userId);
-      navigate("/dashboard", { replace: true });
-    }
-    catch (e: any) {
-
-    }
-  }
-
   const onSubmit = async (data: LoginValues) => {
     setIsSubmitting(true);
     try {
@@ -55,10 +44,11 @@ export default function Login() {
         localStorage.setItem('token', response.data.token);
         set_isAuthenticated(dispatch, true);
         const decodedToken: any = jwtDecode(response.data.token);
-        const user_data = {
+        const decoded_token_user_data = {
           ...decodedToken,
         };
-        dispatch({type: 'USER', payload: user_data});
+        dispatch({type: 'USER', payload: decoded_token_user_data});
+        navigate("/dashboard", { replace: true });
       } else {
         toast.error("Invalid response from server");
       }

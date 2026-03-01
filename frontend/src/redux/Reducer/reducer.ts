@@ -8,7 +8,6 @@ const getUserFromToken = () => {
     const decodedToken: any = jwtDecode(token);
     return {
       ...decodedToken,
-      userType: decodedToken?.roles?.code,
     };
   } catch (error) {
     console.warn('Failed to decode JWT token:', error);

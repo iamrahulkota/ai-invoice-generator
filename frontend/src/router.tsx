@@ -24,12 +24,6 @@ import Signup from "./pages/Signup";
 import { PublicRoute } from "./auth/PublicRoute";
 import { PrivateRoute } from "./auth/PrivateRoute";
 
-const publicRoutes = [
-  { path: "login", element: <Login /> },
-  { path: "signup", element: <Signup /> },
-  { path: "contact", element: <Contact /> },
-];
-
 // Display Error Element
 const ErrorBoundaryWrapper = () => {
   const error = useRouteError();

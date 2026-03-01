@@ -23,9 +23,10 @@ import { useForm } from "react-hook-form";
 import { useDispatch } from 'react-redux';
 import { useNavigate, useParams } from 'react-router';
 import { z } from 'zod';
-import { create_shop } from '@/redux/Action/actions';
+import { create_shop, load_shop_data, update_shop } from '@/redux/Action/actions';
 import { toast } from 'sonner';
 import { Switch } from '@/components/ui/switch';
+import AddEditFormSkeletonLoader from './AddEditFormSkeletonLoader';
 
 const addEditShopSchema = z.object({
   shop_name: z
@@ -126,22 +127,22 @@ export default function AddEditShop() {
     },
   });
 
-  // useEffect(() => {
-  //   if (!shopId) return;
-  //   const fetchShopData = async () => {
-  //     try {
-  //       setIsLoading(true);
-  //       const response = await create_shop(`/shops/${shopId}`);
-  //       const data = response?.data;
-  //       if (data) form.reset(data);
-  //     } catch (error) {
-  //       console.error(error);
-  //     } finally {
-  //       setIsLoading(false);
-  //     }
-  //   };
-  //   fetchShopData();
-  // }, [shopId, form]);
+  useEffect(() => {
+    if (!shopId) return;
+    const fetchShopData = async () => {
+      try {
+        setIsLoading(true);
+        const response = await load_shop_data(dispatch, shopId);
+        const data = response?.data;
+        if (data) form.reset(data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchShopData();
+  }, [shopId, form]);
 
   const handleReset = () => {
     form.reset();
@@ -154,15 +155,16 @@ export default function AddEditShop() {
     try {
       const payload = { ...data };
       console.log("payload -->", payload);
-      // if (shopId) {
-      //   await axiosInstance.patch(`/shops/${shopId}`, payload);
-      //   console.log("SHOP_ID", shopId);
-      // } else {
-      //   await create_shop(payload);
-      // }
-      const response = await create_shop(dispatch, payload);
-      if (response.meta.status) {
-        toast.success(response.meta.message);
+      let response;
+      if (shopId) {
+        response = await update_shop(shopId, payload);
+      } else {
+        response = await create_shop(payload);
+      }
+      if (response?.meta?.status) {
+        toast.success(response?.meta?.message);
+      } else {
+        toast.error(response?.meta?.message || "Unexpected response from server");
       }
       handleReset();
     } catch (error) {
@@ -182,9 +184,7 @@ export default function AddEditShop() {
       </CardHeader>
       <CardContent className='px-2'>
         {isLoading ? (
-          <div className="flex items-center justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-          </div>
+          <AddEditFormSkeletonLoader />
         ) : (
         <Form {...form}>
           <form
